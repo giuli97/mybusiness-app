@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	controller "my-app-server/controller"
-	helpers "my-app-server/helpers"
+	"my-app-server/controller"
+	"my-app-server/helpers"
 	"my-app-server/types"
 
 	"github.com/gorilla/mux"

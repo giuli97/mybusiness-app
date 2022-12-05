@@ -6,6 +6,7 @@ import (
 )
 
 func CreateUser(user models.User) error {
+	//TODO: verificar si el username ya existe
 	bd, err := database.GetDB()
 	if err != nil {
 		return err

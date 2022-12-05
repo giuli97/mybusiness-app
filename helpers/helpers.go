@@ -11,7 +11,6 @@ func RespondWithError(err error, w http.ResponseWriter) {
 }
 
 func RespondWithSuccess(data interface{}, w http.ResponseWriter) {
-
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
 }

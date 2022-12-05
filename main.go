@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"my-app-server/controller"
-	"my-app-server/helpers"
+	"my-app-server/database"
 
 	"github.com/gorilla/mux"
 )
@@ -14,7 +14,7 @@ import (
 func main() {
 	//err := godotenv.Load(".env")
 
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		log.Printf("Error with database" + err.Error())
 		return

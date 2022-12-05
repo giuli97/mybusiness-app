@@ -1,12 +1,12 @@
 package services
 
 import (
-	"my-app-server/helpers"
+	"my-app-server/database"
 	"my-app-server/models"
 )
 
 func CreateUser(user models.User) error {
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return err
 	}
@@ -15,7 +15,7 @@ func CreateUser(user models.User) error {
 }
 
 func DeleteUser(id int64) error {
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return err
 	}
@@ -25,7 +25,7 @@ func DeleteUser(id int64) error {
 
 // It takes the ID to make the update
 func UpdateUser(user models.User) error {
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func UpdateUser(user models.User) error {
 func GetUsers() ([]models.User, error) {
 	//Declare an array because if there's error, we return it empty
 	users := []models.User{}
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return users, err
 	}
@@ -60,7 +60,7 @@ func GetUsers() ([]models.User, error) {
 
 func GetUserById(id int64) (models.User, error) {
 	var user models.User
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return user, err
 	}
@@ -75,7 +75,7 @@ func GetUserById(id int64) (models.User, error) {
 
 func GetUserByUsername(userName string) (models.User, error) {
 	var user models.User
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return user, err
 	}

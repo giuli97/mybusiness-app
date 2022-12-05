@@ -1,13 +1,13 @@
 package services
 
 import (
-	"my-app-server/helpers"
+	"my-app-server/database"
 	"my-app-server/models"
 	"time"
 )
 
 func CreateSession(token string) error {
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return err
 	}
@@ -18,7 +18,7 @@ func CreateSession(token string) error {
 }
 
 func DeleteSession(id int64) error {
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func DeleteSession(id int64) error {
 
 // It takes the ID to make the update
 func UpdateSession(token string, expiresIn string, user models.User) error {
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ func UpdateSession(token string, expiresIn string, user models.User) error {
 func GetSessions() ([]models.Session, error) {
 	//Declare an array because if there's error, we return it empty
 	sessions := []models.Session{}
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return sessions, err
 	}
@@ -64,7 +64,7 @@ func GetSessions() ([]models.Session, error) {
 
 func GetSessionById(id int64) (models.Session, error) {
 	var session models.Session
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return session, err
 	}
@@ -79,7 +79,7 @@ func GetSessionById(id int64) (models.Session, error) {
 
 func GetSessionByUserId(userId int64) (models.Session, error) {
 	var session models.Session
-	bd, err := helpers.GetDB()
+	bd, err := database.GetDB()
 	if err != nil {
 		return session, err
 	}

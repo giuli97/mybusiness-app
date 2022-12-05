@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"my-app-server/helpers"
+	"my-app-server/middleware"
 	"my-app-server/models"
 	"my-app-server/services"
 
@@ -97,13 +98,13 @@ func deleteUserHandler(router *mux.Router) http.HandlerFunc {
 
 func SetupRoutesForUser(router *mux.Router) {
 	// Get all users
-	router.HandleFunc("/user", helpers.ValidateTokenMiddleware(getAllUsersHandler(router))).Methods(http.MethodGet)
+	router.HandleFunc("/user", middleware.ValidateTokenMiddleware(getAllUsersHandler(router))).Methods(http.MethodGet)
 	// Create user
-	router.HandleFunc("/user", helpers.ValidateTokenMiddleware(createUserHandler(router))).Methods(http.MethodPost)
+	router.HandleFunc("/user", middleware.ValidateTokenMiddleware(createUserHandler(router))).Methods(http.MethodPost)
 	// Update user
-	router.HandleFunc("/user", helpers.ValidateTokenMiddleware(updateUserHandler(router))).Methods(http.MethodPut)
+	router.HandleFunc("/user", middleware.ValidateTokenMiddleware(updateUserHandler(router))).Methods(http.MethodPut)
 	// Get one user
-	router.HandleFunc("/user/{id}", helpers.ValidateTokenMiddleware(getOneUserHandler(router))).Methods(http.MethodGet)
+	router.HandleFunc("/user/{id}", middleware.ValidateTokenMiddleware(getOneUserHandler(router))).Methods(http.MethodGet)
 	// Delete user
-	router.HandleFunc("/user/{id}", helpers.ValidateTokenMiddleware(deleteUserHandler(router))).Methods(http.MethodDelete)
+	router.HandleFunc("/user/{id}", middleware.ValidateTokenMiddleware(deleteUserHandler(router))).Methods(http.MethodDelete)
 }

@@ -1,4 +1,4 @@
-package controller
+package services
 
 import (
 	"my-app-server/helpers"
@@ -18,7 +18,6 @@ func CreateSession(token string) error {
 }
 
 func DeleteSession(id int64) error {
-
 	bd, err := helpers.GetDB()
 	if err != nil {
 		return err
@@ -70,6 +69,21 @@ func GetSessionById(id int64) (types.Session, error) {
 		return session, err
 	}
 	row := bd.QueryRow("SELECT id, token, expiresIn, lastUpdate FROM sessions WHERE id = ?", id)
+	err = row.Scan(&session.Id, &session.Token, &session.ExpiresIn, &session.LastUpdate)
+	if err != nil {
+		return session, err
+	}
+	// Success!
+	return session, nil
+}
+
+func GetSessionByUserId(userId int64) (types.Session, error) {
+	var session types.Session
+	bd, err := helpers.GetDB()
+	if err != nil {
+		return session, err
+	}
+	row := bd.QueryRow("SELECT id, token, expiresIn, lastUpdate FROM sessions WHERE userId = ?", userId)
 	err = row.Scan(&session.Id, &session.Token, &session.ExpiresIn, &session.LastUpdate)
 	if err != nil {
 		return session, err

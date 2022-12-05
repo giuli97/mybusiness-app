@@ -1,75 +1,128 @@
 package controller
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"my-app-server/helpers"
+	"my-app-server/services"
 	"my-app-server/types"
+
+	"github.com/gorilla/mux"
 )
 
-func CreateUser(user types.User) error {
-	bd, err := helpers.GetDB()
-	if err != nil {
-		return err
-	}
-	_, err = bd.Exec("INSERT INTO users (name, userName, password) VALUES (?, ?, ?)", user.Name, user.UserName, user.Password)
-	return err
-}
-
-func DeleteUser(id int64) error {
-
-	bd, err := helpers.GetDB()
-	if err != nil {
-		return err
-	}
-	_, err = bd.Exec("DELETE FROM users WHERE id = ?", id)
-	return err
-}
-
-// It takes the ID to make the update
-func UpdateUser(user types.User) error {
-	bd, err := helpers.GetDB()
-	if err != nil {
-		return err
-	}
-	_, err = bd.Exec("UPDATE users SET name = ?, userName = ?, password = ? WHERE id = ?", user.Name, user.UserName, user.Password, user.Id)
-	return err
-}
-func GetUsers() ([]types.User, error) {
-	//Declare an array because if there's error, we return it empty
-	users := []types.User{}
-	bd, err := helpers.GetDB()
-	if err != nil {
-		return users, err
-	}
-	// Get rows so we can iterate them
-	rows, err := bd.Query("SELECT id, name, userName, password FROM users")
-	if err != nil {
-		return users, err
-	}
-	// Iterate rows...
-	for rows.Next() {
-		// In each step, scan one row
-		var user types.User
-		err = rows.Scan(&user.Id, &user.Name, &user.UserName, &user.Password)
-		if err != nil {
-			return users, err
+func getAllUsersHandler(router *mux.Router) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		writer.Header().Set("Content-Type", "Application/json")
+		if request.Method == "GET" {
+			users, err := services.GetUsers()
+			if err == nil {
+				helpers.RespondWithSuccess(users, writer)
+			} else {
+				helpers.RespondWithError(err, writer)
+			}
+		} else {
+			http.Error(writer, "method not allowed", http.StatusMethodNotAllowed)
 		}
-		// and append it to the array
-		users = append(users, user)
 	}
-	return users, nil
 }
 
-func GetUserById(id int64) (types.User, error) {
-	var user types.User
-	bd, err := helpers.GetDB()
-	if err != nil {
-		return user, err
+func createUserHandler(router *mux.Router) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		writer.Header().Set("Content-Type", "Application/json")
+		if request.Method == "POST" {
+			var user types.User
+			err := json.NewDecoder(request.Body).Decode(&user)
+			if err != nil {
+				helpers.RespondWithError(err, writer)
+			} else {
+				err := services.CreateUser(user)
+				if err != nil {
+					helpers.RespondWithError(err, writer)
+				} else {
+					helpers.RespondWithSuccess(true, writer)
+				}
+			}
+		} else {
+			http.Error(writer, "method not allowed", http.StatusMethodNotAllowed)
+		}
 	}
-	row := bd.QueryRow("SELECT id, name, userName, password FROM users WHERE id = ?", id)
-	err = row.Scan(&user.Id, &user.Name, &user.UserName, &user.Password)
-	if err != nil {
-		return user, err
+}
+
+func updateUserHandler(router *mux.Router) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		writer.Header().Set("Content-Type", "Application/json")
+		if request.Method == "PUT" {
+			var user types.User
+			err := json.NewDecoder(request.Body).Decode(&user)
+			if err != nil {
+				helpers.RespondWithError(err, writer)
+			} else {
+				err := services.UpdateUser(user)
+				if err != nil {
+					helpers.RespondWithError(err, writer)
+				} else {
+					helpers.RespondWithSuccess(true, writer)
+				}
+			}
+		} else {
+			http.Error(writer, "method not allowed", http.StatusMethodNotAllowed)
+		}
 	}
-	// Success!
-	return user, nil
+}
+
+func getOneUserHandler(router *mux.Router) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		writer.Header().Set("Content-Type", "Application/json")
+		if request.Method == "GET" {
+			idAsString := mux.Vars(request)["id"]
+			id, err := helpers.StringToInt64(idAsString)
+			if err != nil {
+				helpers.RespondWithError(err, writer)
+				// We return, so we stop the function flow
+				return
+			}
+			user, err := services.GetUserById(id)
+			if err != nil {
+				helpers.RespondWithError(err, writer)
+			} else {
+				helpers.RespondWithSuccess(user, writer)
+			}
+		} else {
+			http.Error(writer, "method not allowed", http.StatusMethodNotAllowed)
+		}
+	}
+}
+
+func deleteUserHandler(router *mux.Router) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		writer.Header().Set("Content-Type", "Application/json")
+		if request.Method == "DELETE" {
+			idAsString := mux.Vars(request)["id"]
+			id, err := helpers.StringToInt64(idAsString)
+			if err != nil {
+				helpers.RespondWithError(err, writer)
+				// We return, so we stop the function flow
+				return
+			}
+			err = services.DeleteUser(id)
+			if err != nil {
+				helpers.RespondWithError(err, writer)
+			} else {
+				helpers.RespondWithSuccess(true, writer)
+			}
+		} else {
+			http.Error(writer, "method not allowed", http.StatusMethodNotAllowed)
+		}
+	}
+}
+
+func SetupRoutesForUser(router *mux.Router) {
+	// Create user
+	router.HandleFunc("/user", helpers.ValidateTokenMiddleware(getAllUsersHandler(router))).Methods(http.MethodGet)
+	router.HandleFunc("/user", helpers.ValidateTokenMiddleware(createUserHandler(router))).Methods(http.MethodPost)
+	router.HandleFunc("/user", helpers.ValidateTokenMiddleware(updateUserHandler(router))).Methods(http.MethodPut)
+	router.HandleFunc("/user/{id}", helpers.ValidateTokenMiddleware(getOneUserHandler(router))).Methods(http.MethodGet)
+	router.HandleFunc("/user/{id}", helpers.ValidateTokenMiddleware(deleteUserHandler(router))).Methods(http.MethodDelete)
+
 }

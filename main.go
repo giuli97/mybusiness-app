@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"my-app-server/controller"
 	"my-app-server/helpers"
-	routes "my-app-server/routes"
 
 	"github.com/gorilla/mux"
 )
@@ -28,10 +28,7 @@ func main() {
 
 	// Define routes
 	router := mux.NewRouter()
-	routes.SetupRoutesForUsers(router)
-	// .. here you can define more routes
-	// ...
-	// for example setupRoutesForGenres(router)
+	controller.SetupAllRoutes(router)
 
 	// Setup and start server
 	port := ":8000"

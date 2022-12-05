@@ -17,4 +17,6 @@ var (
 		os.Getenv("db_name"))
 )
 
+var SecretKey = os.Getenv("secret")
+
 const AllowedCORSDomain = "http://localhost"

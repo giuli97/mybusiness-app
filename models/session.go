@@ -1,13 +1,6 @@
-package types
+package models
 
 import jwt "github.com/dgrijalva/jwt-go"
-
-type User struct {
-	Id       int64  `json:"id"`
-	Name     string `json:"name"`
-	UserName string `json:"userName"`
-	Password string `json:"password,omitempty"`
-}
 
 type Session struct {
 	Id         int64  `json:"id"`

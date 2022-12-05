@@ -2,7 +2,7 @@ package services
 
 import (
 	"my-app-server/helpers"
-	"my-app-server/types"
+	"my-app-server/models"
 	"time"
 )
 
@@ -27,7 +27,7 @@ func DeleteSession(id int64) error {
 }
 
 // It takes the ID to make the update
-func UpdateSession(token string, expiresIn string, user types.User) error {
+func UpdateSession(token string, expiresIn string, user models.User) error {
 	bd, err := helpers.GetDB()
 	if err != nil {
 		return err
@@ -36,9 +36,9 @@ func UpdateSession(token string, expiresIn string, user types.User) error {
 	_, err = bd.Exec("UPDATE sessions SET token = ?, expiresIn = ?, lastUpdate = ? WHERE userId = ?", token, expiresIn, timeNow, user.Id)
 	return err
 }
-func GetSessions() ([]types.Session, error) {
+func GetSessions() ([]models.Session, error) {
 	//Declare an array because if there's error, we return it empty
-	sessions := []types.Session{}
+	sessions := []models.Session{}
 	bd, err := helpers.GetDB()
 	if err != nil {
 		return sessions, err
@@ -51,7 +51,7 @@ func GetSessions() ([]types.Session, error) {
 	// Iterate rows...
 	for rows.Next() {
 		// In each step, scan one row
-		var session types.Session
+		var session models.Session
 		err = rows.Scan(&session.Id, &session.Token, &session.ExpiresIn, &session.LastUpdate)
 		if err != nil {
 			return sessions, err
@@ -62,8 +62,8 @@ func GetSessions() ([]types.Session, error) {
 	return sessions, nil
 }
 
-func GetSessionById(id int64) (types.Session, error) {
-	var session types.Session
+func GetSessionById(id int64) (models.Session, error) {
+	var session models.Session
 	bd, err := helpers.GetDB()
 	if err != nil {
 		return session, err
@@ -77,8 +77,8 @@ func GetSessionById(id int64) (types.Session, error) {
 	return session, nil
 }
 
-func GetSessionByUserId(userId int64) (types.Session, error) {
-	var session types.Session
+func GetSessionByUserId(userId int64) (models.Session, error) {
+	var session models.Session
 	bd, err := helpers.GetDB()
 	if err != nil {
 		return session, err

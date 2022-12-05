@@ -2,8 +2,8 @@ package controller
 
 import (
 	"encoding/json"
+	"my-app-server/models"
 	"my-app-server/services"
-	"my-app-server/types"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -14,7 +14,7 @@ func LoginHandler() http.HandlerFunc {
 		writer.Header().Set("Content-Type", "Application/json")
 		body := request.Body
 		defer body.Close()
-		var user types.User
+		var user models.User
 		err := json.NewDecoder(body).Decode(&user)
 		if err != nil {
 			http.Error(writer, "cannot decode json", http.StatusBadRequest)

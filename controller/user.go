@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"my-app-server/helpers"
+	"my-app-server/models"
 	"my-app-server/services"
-	"my-app-server/types"
 
 	"github.com/gorilla/mux"
 )
@@ -26,7 +26,7 @@ func getAllUsersHandler(router *mux.Router) http.HandlerFunc {
 func createUserHandler(router *mux.Router) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Set("Content-Type", "Application/json")
-		var user types.User
+		var user models.User
 		err := json.NewDecoder(request.Body).Decode(&user)
 		if err != nil {
 			helpers.RespondWithError(err, writer)
@@ -44,7 +44,7 @@ func createUserHandler(router *mux.Router) http.HandlerFunc {
 func updateUserHandler(router *mux.Router) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Set("Content-Type", "Application/json")
-		var user types.User
+		var user models.User
 		err := json.NewDecoder(request.Body).Decode(&user)
 		if err != nil {
 			helpers.RespondWithError(err, writer)

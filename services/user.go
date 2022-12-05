@@ -2,10 +2,10 @@ package services
 
 import (
 	"my-app-server/helpers"
-	"my-app-server/types"
+	"my-app-server/models"
 )
 
-func CreateUser(user types.User) error {
+func CreateUser(user models.User) error {
 	bd, err := helpers.GetDB()
 	if err != nil {
 		return err
@@ -24,7 +24,7 @@ func DeleteUser(id int64) error {
 }
 
 // It takes the ID to make the update
-func UpdateUser(user types.User) error {
+func UpdateUser(user models.User) error {
 	bd, err := helpers.GetDB()
 	if err != nil {
 		return err
@@ -32,9 +32,9 @@ func UpdateUser(user types.User) error {
 	_, err = bd.Exec("UPDATE users SET name = ?, userName = ?, password = ? WHERE id = ?", user.Name, user.UserName, user.Password, user.Id)
 	return err
 }
-func GetUsers() ([]types.User, error) {
+func GetUsers() ([]models.User, error) {
 	//Declare an array because if there's error, we return it empty
-	users := []types.User{}
+	users := []models.User{}
 	bd, err := helpers.GetDB()
 	if err != nil {
 		return users, err
@@ -47,7 +47,7 @@ func GetUsers() ([]types.User, error) {
 	// Iterate rows...
 	for rows.Next() {
 		// In each step, scan one row
-		var user types.User
+		var user models.User
 		err = rows.Scan(&user.Id, &user.Name, &user.UserName, &user.Password)
 		if err != nil {
 			return users, err
@@ -58,8 +58,8 @@ func GetUsers() ([]types.User, error) {
 	return users, nil
 }
 
-func GetUserById(id int64) (types.User, error) {
-	var user types.User
+func GetUserById(id int64) (models.User, error) {
+	var user models.User
 	bd, err := helpers.GetDB()
 	if err != nil {
 		return user, err
@@ -73,8 +73,8 @@ func GetUserById(id int64) (types.User, error) {
 	return user, nil
 }
 
-func GetUserByUsername(userName string) (types.User, error) {
-	var user types.User
+func GetUserByUsername(userName string) (models.User, error) {
+	var user models.User
 	bd, err := helpers.GetDB()
 	if err != nil {
 		return user, err

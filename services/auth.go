@@ -2,16 +2,16 @@ package services
 
 import (
 	"log"
-	"my-app-server/types"
+	"my-app-server/models"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-func GetTokens() *types.JWTResponse {
+func GetTokens() *models.JWTResponse {
 	token := signToken()
 	refresh := signRefreshToken()
-	return &types.JWTResponse{
+	return &models.JWTResponse{
 		Token:   token,
 		Refresh: refresh,
 	}
